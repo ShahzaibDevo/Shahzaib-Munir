@@ -1,0 +1,11 @@
+
+.credit{
+  display: block;
+  margin-top: 2rem;
+  text-align: right;
+}
+a{
+  color: #64ffda;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
