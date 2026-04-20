@@ -3,19 +3,17 @@ import React, { useState, useEffect, useRef } from 'react';
 import './portfolio.css';
 import StackCr from './cr@/StackCr';
 import resume from "../assets/Shahzaib_Resume-2 (1).pdf";
-import kodekloudCert from "../assets/cert.png";
 import { MdDarkMode, MdLightMode } from 'react-icons/md';
+import { Link } from 'react-router-dom';
 const Portfolio = () => {
   //fix bio and add email.js
   // ---------------------------------------------------------------- Hooks
   const [activeSection, setActiveSection] = useState('home');
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [currentProject, setCurrentProject] = useState(null);
   const [theme, setTheme] = useState('dark');
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const sectionRefs = {
     home: useRef(null),
     experience: useRef(null),
-    projects: useRef(null),
     infrastructure: useRef(null),
     services: useRef(null),
     skills: useRef(null),
@@ -27,6 +25,7 @@ const Portfolio = () => {
   const scrollToSection = (section) => {
     sectionRefs[section].current?.scrollIntoView({ behavior: 'smooth' });
     setActiveSection(section);
+    setIsMenuOpen(false);
   };
 
   // Handle scroll event to update active section
@@ -50,90 +49,11 @@ const Portfolio = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // Open project modal
-  const openProjectModal = (project) => {
-    setCurrentProject(project);
-    setIsModalOpen(true);
-  };
-
-  // Close project modal
-  const closeModal = () => {
-    setIsModalOpen(false);
-    setCurrentProject(null);
-  };
-
   // Toggle theme
   const toggleTheme = () => {
     setTheme(theme === 'dark' ? 'light' : 'dark');
   };
 
-
-
-  // Project data
-  const projects = [
-    {
-      id: 1,
-      title: "100 Days of DevOps Challenge (KodeKloud)",
-      description: "Successfully completed the 100 Days of DevOps Challenge from KodeKloud, performing daily hands-on labs covering real-world DevOps tools, cloud infrastructure, and automation practices.",
-      githubLink: "https://github.com/ShahzaibDevo/100-Days-of-Devops",
-      image: kodekloudCert
-    },
-    {
-      id: 2,
-      title: "CI/CD and DevOps",
-      period: "September 2024 – November 2024",
-      description: "Designed and implemented a complete CI/CD pipeline using Jenkins, Docker, and Kubernetes. Automated testing and deployment processes, reducing deployment time by 70%.",
-      image: "https://www.veritis.com/wp-content/uploads/2021/03/continuous-delivery-cd.jpg"
-    },
-    {
-      id: 3,
-      title: "Three Tier Application",
-      period: "August 2025 – November 2025",
-      description: "Built a scalable three-tier web application on AWS with Terraform for infrastructure as code. Implemented auto-scaling and load balancing for high availability.",
-      image: "https://media.geeksforgeeks.org/wp-content/uploads/20231108115918/Three-Tier-architecture.png"
-    },
-    {
-      id: 4,
-      title: "Cloud Infrastructure and Web Application",
-      period: "January 2025 – July 2025",
-      description: "Developed a cloud-native web application with microservices architecture. Utilized AWS EKS for container orchestration and implemented monitoring with Prometheus and Grafana."
-    },
-    {
-      id: 5,
-      title: "Cloud Infrastructure Modernization",
-      description: "Modernized business cloud infrastructure by improving architecture and migrating environments toward AWS Control Tower governance while following AWS Well-Architected Framework principles.",
-      technologies: ["AWS Control Tower", "AWS Well-Architected Framework", "Cloud Migration", "Infrastructure Optimization"],
-      githubLink: "https://github.com"
-    },
-    {
-      id: 6,
-      title: "EKS Application Deployment",
-      description: "Deployed multiple containerized applications on Amazon EKS using Helm charts and implemented multi-environment deployment pipelines including Development, Staging, and Production environments.",
-      technologies: ["Amazon EKS", "Helm", "Kubernetes", "CI/CD Pipelines", "Multi-Environment Deployment"],
-      githubLink: "https://github.com"
-    },
-    {
-      id: 7,
-      title: "Multi-Platform Application Deployment",
-      description: "Deployed web applications on EC2, ECS, and EKS. Mobile app deployment on AWS Amplify and Python-based applications on AWS App Runner.",
-      technologies: ["EC2", "ECS", "EKS", "AWS Amplify", "App Runner"],
-      githubLink: "https://github.com/ShahzaibDevo"
-    },
-    {
-      id: 8,
-      title: "Image Optimization & LLM Deployment",
-      description: "Successfully optimized Docker image from 1TB to 16GB and deployed LLM model on serverless services using RunPod.",
-      technologies: ["Docker Optimization", "LLM", "Serverless", "RunPod"],
-      githubLink: "https://github.com/ShahzaibDevo"
-    },
-    {
-      id: 9,
-      title: "Automated Docker Migration Pipeline",
-      description: "Migrated 1TB Docker images from RunPods to AWS GPU-based EC2 instances using automated CI/CD pipeline. Eliminated manual intervention and integrated RDS deployment for complete automation.",
-      technologies: ["Docker Migration", "AWS GPU EC2", "CI/CD Pipeline", "RDS Integration", "RunPod to AWS"],
-      githubLink: "https://github.com/ShahzaibDevo"
-    },
-  ];
 
 //Skills section data 
 const codingSkills = [
@@ -208,11 +128,24 @@ const awards = [
     <div className={`portfolio-container ${theme}-mode`}>
       {/* Top Navbar Navigation */}
       <nav className="top-navbar">
-        <div className="brand-name">Shahzaib Munir</div>
-        <ul className="nav-links">
+        <div className="nav-header">
+          <div className="brand-name">Shahzaib Munir</div>
+          <button
+            type="button"
+            className="menu-toggle"
+            onClick={() => setIsMenuOpen((prev) => !prev)}
+            aria-label={isMenuOpen ? 'Close navigation menu' : 'Open navigation menu'}
+            aria-expanded={isMenuOpen}
+          >
+            {isMenuOpen ? '✕' : '☰'}
+          </button>
+        </div>
+        <ul className={`nav-links ${isMenuOpen ? 'open' : ''}`}>
           <li className={activeSection === 'home' ? 'active' : ''} onClick={() => scrollToSection('home')}>Home</li>
           <li className={activeSection === 'experience' ? 'active' : ''} onClick={() => scrollToSection('experience')}>Experience</li>
-          <li className={activeSection === 'projects' ? 'active' : ''} onClick={() => scrollToSection('projects')}>Projects</li>
+          <li className={activeSection === 'projects' ? 'active' : ''}>
+            <Link to="/projects" onClick={() => setIsMenuOpen(false)}>Projects</Link>
+          </li>
           <li className={activeSection === 'infrastructure' ? 'active' : ''} onClick={() => scrollToSection('infrastructure')}>Infrastructure</li>
           <li className={activeSection === 'services' ? 'active' : ''} onClick={() => scrollToSection('services')}>Services</li>
           <li className={activeSection === 'skills' ? 'active' : ''} onClick={() => scrollToSection('skills')}>Skills</li>
@@ -232,7 +165,6 @@ const awards = [
             <div className="text-content">
               <h1>Shahzaib Munir</h1>
               <h2 className="hero-title">Cloud & DevOps Engineer</h2>
-              <p className="hero-subtitle">1+ Year of Experience | 10+ Successful DevOps & Cloud Projects</p>
               <div className="vision-box">
                 <p className="hero-description">
                   <span className="star-icon">⭐</span>
@@ -244,21 +176,6 @@ const awards = [
                 <a href="https://github.com" target="_blank" rel="noopener noreferrer" style={{width:"160px", height:"44px", display:"flex", alignItems:"center", justifyContent:"center", border:"2px solid #00bfa5", borderRadius:"8px", color:"#00bfa5", fontSize:"14px", background:"transparent", textDecoration:"none", cursor:"pointer", flexShrink:"0"}}>GitHub</a>
                 <a href="https://www.linkedin.com/in/shahzaib21/" target="_blank" rel="noopener noreferrer" style={{width:"160px", height:"44px", display:"flex", alignItems:"center", justifyContent:"center", border:"2px solid white", borderRadius:"8px", color:"white", fontSize:"14px", background:"transparent", textDecoration:"none", cursor:"pointer", flexShrink:"0"}}>LinkedIn</a>
                 <a href={resume} download style={{width:"160px", height:"44px", display:"flex", alignItems:"center", justifyContent:"center", border:"2px solid white", borderRadius:"8px", color:"white", fontSize:"14px", background:"transparent", textDecoration:"none", cursor:"pointer", flexShrink:"0"}}>Download Resume</a>
-              </div>
-              <div className="stats-divider"></div>
-              <div className="hero-stats">
-                <div className="stat-item">
-                  <div className="stat-number">10</div>
-                  <div className="stat-label">Projects Delivered</div>
-                </div>
-                <div className="stat-item">
-                  <div className="stat-number">100%</div>
-                  <div className="stat-label">Online Delivery</div>
-                </div>
-                <div className="stat-item">
-                  <div className="stat-number">$50</div>
-                  <div className="stat-label">Saved Daily</div>
-                </div>
               </div>
             </div>
           </div>
@@ -323,40 +240,6 @@ const awards = [
                 <p>Used Git for version control and Docker for containerization and deployment.</p>
               </div>
             </div>
-          </div>
-        </section>
-
-        {/* Projects Section */}
-        <section ref={sectionRefs.projects} id="projects" className="section projects-section">
-          <div className="section-container">
-            <h2 className="section-title-projects">My Projects</h2>
-          </div>
-          <div className="projects-grid">
-            {projects.map((project, index) => (
-              <div key={project.id} className="project-wrapper">
-                <div className="project-card">
-                  <h3>{project.title}</h3>
-                  {project.period && <p className="project-period">{project.period}</p>}
-                  {project.image && (
-                    <div className="project-image">
-                      <img src={project.image} alt={project.title} />
-                    </div>
-                  )}
-                  <p className="project-description">{project.description}</p>
-                  {project.technologies && (
-                    <div className="project-tech">
-                      {project.technologies.map((tech, techIndex) => (
-                        <span key={techIndex} className="tech-chip">{tech}</span>
-                      ))}
-                    </div>
-                  )}
-                  <div className="project-buttons">
-                    <a href={project.githubLink || "https://github.com"} target="_blank" rel="noopener noreferrer" className="btn github-btn">GitHub</a>
-                    <button type="button" className="view-project-btn" onClick={() => openProjectModal(project)}>View Details</button>
-                  </div>
-                </div>
-              </div>
-            ))}
           </div>
         </section>
 
@@ -523,18 +406,6 @@ const awards = [
         <StackCr />
       </main>
 
-      {/* Project Modal */}
-      {isModalOpen && currentProject && (
-        <div className="modal-overlay" onClick={closeModal}>
-          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-            <button className="modal-close" onClick={closeModal}>×</button>
-            <h2>{currentProject.title}</h2>
-            <p className="modal-period">{currentProject.period}</p>
-            <img src={currentProject.image} alt={currentProject.title} className="modal-image" />
-            <p>{currentProject.description}</p>
-          </div>
-        </div>
-      )}
     </div>
   );
 };

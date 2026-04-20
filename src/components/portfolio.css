@@ -136,7 +136,7 @@ body.dark-mode {
   position: fixed;
   top: 0;
   left: 0;
-  z-index: 100;
+  z-index: 1000;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -173,11 +173,22 @@ body.dark-mode {
   font-weight: 600;
 }
 
+.nav-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  max-width: fit-content;
+}
+
 .nav-links {
   display: flex;
   gap: 0.75rem;
   list-style: none;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
+  align-items: center;
+  margin-left: auto;
+  transition: max-height 0.3s ease, opacity 0.3s ease, transform 0.3s ease;
 }
 
 .nav-links li {
@@ -191,7 +202,31 @@ body.dark-mode {
 .nav-links li:hover,
 .nav-links li.active {
   background: rgba(255, 255, 255, 0.08);
+  color: #64ffda;
+}
+
+.nav-links a {
   color: #ffffff;
+  text-decoration: none;
+}
+
+.nav-links li.active a {
+  color: #64ffda;
+}
+
+.menu-toggle {
+  display: none;
+  border: 1px solid rgba(100, 255, 218, 0.5);
+  background: transparent;
+  color: #ffffff;
+  width: 42px;
+  height: 42px;
+  border-radius: 10px;
+  font-size: 1.3rem;
+  line-height: 1;
+  cursor: pointer;
+  align-items: center;
+  justify-content: center;
 }
 
 .theme-toggle {
@@ -1487,29 +1522,51 @@ body.dark-mode {
 @media (max-width: 768px) {
   .top-navbar {
     flex-direction: column;
-    align-items: flex-start;
-    padding: 1rem;
+    align-items: stretch;
+    padding: 0.9rem 1rem;
   }
-  
+
+  .nav-header {
+    max-width: none;
+  }
+
+  .menu-toggle {
+    display: inline-flex;
+  }
+
+  .theme-toggle {
+    display: none;
+  }
+
   .nav-links {
     width: 100%;
-    justify-content: center;
-    gap: 0.5rem;
+    margin-left: 0;
+    flex-direction: column;
+    align-items: flex-start;
+    background: linear-gradient(135deg, rgba(10, 25, 47, 0.98) 0%, rgba(17, 34, 64, 0.98) 100%);
+    border-radius: 12px;
+    padding: 0 0.75rem;
+    max-height: 0;
+    opacity: 0;
+    transform: translateY(-10px);
+    overflow: hidden;
+    pointer-events: none;
   }
-  
+
+  .nav-links.open {
+    margin-top: 0.8rem;
+    padding: 0.75rem;
+    max-height: 480px;
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
+  }
+
   .nav-links li {
-    padding: 0.65rem 0.85rem;
-    font-size: 0.85rem;
-  }
-  
-  .nav-brand {
     width: 100%;
-    justify-content: space-between;
-  }
-  
-  .nav-profile {
-    width: 45px;
-    height: 45px;
+    border-radius: 10px;
+    padding: 0.7rem 0.8rem;
+    font-size: 0.95rem;
   }
 
   .section {
